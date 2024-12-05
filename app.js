@@ -1,5 +1,6 @@
 const express = require('express');
 const chatGptExecute = require('./llm');
+const productInfo = require('./productInfo');
 require('dotenv').config();
 
 const port = process.env.PORT;
@@ -10,7 +11,8 @@ app.get('/', async (req, res) => {
 	try {
 		// Name sent through query
 		product_name = req.query.name;
-		gptRes = await chatGptExecute(product_name);
+		productRes = await productInfo(product_name);
+		gptRes = await chatGptExecute(product_name, productRes);
 		res.json(JSON.parse(gptRes));
 	} catch (error) {
 		console.error(typeof error);
@@ -18,6 +20,6 @@ app.get('/', async (req, res) => {
 	}
 });
 
-app.listen(port, () => {
+app.listen(3000, () => {
 	console.log(`App is running on port ${port}`);
 });

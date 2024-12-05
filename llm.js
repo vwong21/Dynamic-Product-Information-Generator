@@ -51,83 +51,6 @@ example_json = {
 				'Bluetooth connectivity',
 			],
 		},
-		sellers: {
-			amazon: {
-				pricing: {
-					currency: 'USD',
-					price: 79.99,
-					discount: {
-						isAvailable: true,
-						percentage: 10,
-						validUntil: '2024-12-31',
-					},
-				},
-				availability: {
-					inStock: true,
-					stockCount: 150,
-					warehouses: [
-						{
-							location: 'Los Angeles, CA',
-							stock: 100,
-						},
-						{
-							location: 'New York, NY',
-							stock: 50,
-						},
-					],
-				},
-			},
-			bestBuy: {
-				pricing: {
-					currency: 'USD',
-					price: 79.99,
-					discount: {
-						isAvailable: true,
-						percentage: 10,
-						validUntil: '2024-12-31',
-					},
-				},
-				availability: {
-					inStock: true,
-					stockCount: 150,
-					warehouses: [
-						{
-							location: 'Los Angeles, CA',
-							stock: 100,
-						},
-						{
-							location: 'New York, NY',
-							stock: 50,
-						},
-					],
-				},
-			},
-			staples: {
-				pricing: {
-					currency: 'USD',
-					price: 79.99,
-					discount: {
-						isAvailable: true,
-						percentage: 10,
-						validUntil: '2024-12-31',
-					},
-				},
-				availability: {
-					inStock: true,
-					stockCount: 150,
-					warehouses: [
-						{
-							location: 'Los Angeles, CA',
-							stock: 100,
-						},
-						{
-							location: 'New York, NY',
-							stock: 50,
-						},
-					],
-				},
-			},
-		},
 		reviews: [
 			{
 				user: 'johndoe',
@@ -145,31 +68,32 @@ example_json = {
 			},
 		],
 		tags: ['robot', 'educational', 'AI', 'kids', 'interactive'],
-		relatedProducts: [
-			{
-				id: '67890',
-				name: 'Coding Wizard Starter Kit',
-				url: 'https://www.futureplay.com/products/67890',
-			},
-			{
-				id: '11223',
-				name: 'PuzzleBot Junior',
-				url: 'https://www.futureplay.com/products/11223',
-			},
-		],
 	},
 };
 
-const sources = [
-	'https://www.bestbuy.ca/en-ca',
-	'amazon.ca',
-	'staples.ca',
-	'canadaianappliances.ca',
-];
+const error = {
+	status: 'error',
+	message: 'Product could not be found',
+};
 
-const chatGptExecute = async (name) => {
-	// Prompt to be plugged in as user to LLM. Takes the name variable
-	const prompt = `Provide valid JSON output. First, try to find a product similar to ${name} from these sources: ${sources}. If it exists provide data on the product. If not, return JSON format with message saying it doesnt exist`;
+const chatGptExecute = async (name, data) => {
+	console.log('Starting LLM...');
+	console.log(data.reviews);
+	// Prompt to be plugged in as user to LLM. Takes the name variable and data
+	const prompt = `Provide valid JSON output. Ignoring caps, check to see if any part of ${
+		data.name
+	} contains ${name} (case insensitive, space insensitive, and allow small errors). If it doesn't, send back ${JSON.stringify(
+		error
+	)}. If it does, do this:
+	- Following the schema strictly, fill out name, manufacturer.name, and price with ${JSON.stringify(
+		data
+	)}. Fill out id (model number), description, category, specifications, tags, and related products with information regarding ${name}.
+ 	FIll out the reviews with ${JSON.stringify(
+		data.reviews
+	)}. Fill out manufacturer.address, manufacturer.contact by researching ${
+		data.manufacturer
+	}`;
+
 	try {
 		const completion = await openai.chat.completions.create({
 			model: 'gpt-3.5-turbo',
@@ -201,9 +125,5 @@ const chatGptExecute = async (name) => {
 		throw new Error(error);
 	}
 };
-
-chatGptExecute(
-	'iRobot Roomba j7+ Wi-Fi Connected Self-Empty Robot Vacuum (j7550)'
-);
 
 module.exports = chatGptExecute;
