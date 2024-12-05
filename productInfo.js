@@ -50,7 +50,7 @@ const productInfo = async (name) => {
 				);
 				return linkElement ? linkElement.href : null;
 			})
-			.filter((href) => href !== null); // Remove null links
+			.filter((href) => href !== null);
 	});
 
 	if (productLinks.length === 0) {
@@ -135,8 +135,5 @@ const productInfo = async (name) => {
 
 	return res;
 };
-
-// productInfo('irobot roomba j7+');
-// test();
 
 module.exports = productInfo;
