@@ -51,28 +51,82 @@ example_json = {
 				'Bluetooth connectivity',
 			],
 		},
-		pricing: {
-			currency: 'USD',
-			price: 79.99,
-			discount: {
-				isAvailable: true,
-				percentage: 10,
-				validUntil: '2024-12-31',
+		sellers: {
+			amazon: {
+				pricing: {
+					currency: 'USD',
+					price: 79.99,
+					discount: {
+						isAvailable: true,
+						percentage: 10,
+						validUntil: '2024-12-31',
+					},
+				},
+				availability: {
+					inStock: true,
+					stockCount: 150,
+					warehouses: [
+						{
+							location: 'Los Angeles, CA',
+							stock: 100,
+						},
+						{
+							location: 'New York, NY',
+							stock: 50,
+						},
+					],
+				},
 			},
-		},
-		availability: {
-			inStock: true,
-			stockCount: 150,
-			warehouses: [
-				{
-					location: 'Los Angeles, CA',
-					stock: 100,
+			bestBuy: {
+				pricing: {
+					currency: 'USD',
+					price: 79.99,
+					discount: {
+						isAvailable: true,
+						percentage: 10,
+						validUntil: '2024-12-31',
+					},
 				},
-				{
-					location: 'New York, NY',
-					stock: 50,
+				availability: {
+					inStock: true,
+					stockCount: 150,
+					warehouses: [
+						{
+							location: 'Los Angeles, CA',
+							stock: 100,
+						},
+						{
+							location: 'New York, NY',
+							stock: 50,
+						},
+					],
 				},
-			],
+			},
+			staples: {
+				pricing: {
+					currency: 'USD',
+					price: 79.99,
+					discount: {
+						isAvailable: true,
+						percentage: 10,
+						validUntil: '2024-12-31',
+					},
+				},
+				availability: {
+					inStock: true,
+					stockCount: 150,
+					warehouses: [
+						{
+							location: 'Los Angeles, CA',
+							stock: 100,
+						},
+						{
+							location: 'New York, NY',
+							stock: 50,
+						},
+					],
+				},
+			},
 		},
 		reviews: [
 			{
@@ -106,9 +160,16 @@ example_json = {
 	},
 };
 
+const sources = [
+	'https://www.bestbuy.ca/en-ca',
+	'amazon.ca',
+	'staples.ca',
+	'canadaianappliances.ca',
+];
+
 const chatGptExecute = async (name) => {
 	// Prompt to be plugged in as user to LLM. Takes the name variable
-	const prompt = `Provide valid JSON output. Provide data on a product called ${name}.`;
+	const prompt = `Provide valid JSON output. First, try to find a product similar to ${name} from these sources: ${sources}. If it exists provide data on the product. If not, return JSON format with message saying it doesnt exist`;
 	try {
 		const completion = await openai.chat.completions.create({
 			model: 'gpt-3.5-turbo',
@@ -134,11 +195,15 @@ const chatGptExecute = async (name) => {
 		if (finishReason !== 'stop') {
 			throw new Error(`Not enough tokens`);
 		}
-
+		console.log(completion.choices[0].message.content);
 		return completion.choices[0].message.content;
 	} catch (error) {
 		throw new Error(error);
 	}
 };
+
+chatGptExecute(
+	'iRobot Roomba j7+ Wi-Fi Connected Self-Empty Robot Vacuum (j7550)'
+);
 
 module.exports = chatGptExecute;
