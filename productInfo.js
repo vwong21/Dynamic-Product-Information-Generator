@@ -65,8 +65,6 @@ const productInfo = async (name) => {
 			.filter((href) => href !== null);
 	});
 
-	console.log(productLinks);
-
 	if (productLinks.length === 0) {
 		console.log('No valid product links found.');
 		await browser.close();
@@ -96,9 +94,12 @@ const productInfo = async (name) => {
 		const priceWhole = document.querySelector('.a-price-whole');
 		const priceFraction = document.querySelector('.a-price-fraction');
 
-		return Number(
-			`${priceWhole.textContent.trim()}${priceFraction.textContent.trim()}`
-		);
+		if (priceWhole && priceFraction) {
+			// Remove commas from priceWhole and construct the float
+			const whole = priceWhole.textContent.trim().replace(/,/g, '');
+			const fraction = priceFraction.textContent.trim();
+			return parseFloat(`${whole}${fraction}`);
+		}
 	});
 
 	// Wait for manufacturer to load and get manufacturer
@@ -144,6 +145,8 @@ const productInfo = async (name) => {
 		return topReviews;
 	});
 	res.reviews = reviews;
+
+	console.log(res);
 
 	await browser.close();
 
