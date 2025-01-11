@@ -84,11 +84,11 @@ const chatGptExecute = async (name, data) => {
 		data.name
 	} contains ${name} (case insensitive, space insensitive, and allow small errors). If it doesn't, send back ${JSON.stringify(
 		error
-	)}. If it does, do this:
+	)}. If it does, do the following:
 	- Following the schema strictly, fill out name, manufacturer.name, and price with ${JSON.stringify(
 		data
 	)}. Fill out id (model number), description, category, specifications, and tags with information regarding ${name}.
- 	FIll out the reviews with ${JSON.stringify(
+ 	Fill out the reviews with ${JSON.stringify(
 		data.reviews
 	)}. Fill out manufacturer.address, manufacturer.contact by researching ${
 		data.manufacturer

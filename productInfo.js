@@ -15,7 +15,7 @@ const productInfo = async (name) => {
 	console.log('Creating new page...');
 	const page = await browser.newPage();
 
-	// Connect to Amacon
+	// Connect to Amazon
 	console.log('Connecting to Amazon.ca...');
 	await page.goto('https://www.amazon.ca/');
 
@@ -33,6 +33,14 @@ const productInfo = async (name) => {
 	await page.waitForSelector(
 		'a.a-link-normal.s-underline-text.s-underline-link-text.s-link-style.a-text-normal'
 	);
+
+	await page.waitForFunction(
+		() =>
+			document.querySelectorAll(
+				'div[data-component-type="s-search-result"]'
+			).length > 10
+	);
+
 	const productLinks = await page.evaluate(() => {
 		const products = Array.from(
 			document.querySelectorAll(
@@ -41,17 +49,23 @@ const productInfo = async (name) => {
 		);
 
 		return products
-			.filter(
-				(product) => !product.innerText.includes('Sponsored') // Exclude sponsored products
-			)
+			.filter((product) => {
+				// Check if the product contains the "Sponsored" tag
+				const sponsoredTag = product.querySelector(
+					'div.a-row.a-spacing-micro'
+				);
+				return !sponsoredTag; // Include only if no sponsoredTag exists
+			})
 			.map((product) => {
 				const linkElement = product.querySelector(
-					'a.a-link-normal.s-underline-text.s-underline-link-text.s-link-style.a-text-normal'
+					'a.a-link-normal.s-underline-text.s-link-style.a-text-normal'
 				);
 				return linkElement ? linkElement.href : null;
 			})
 			.filter((href) => href !== null);
 	});
+
+	console.log(productLinks);
 
 	if (productLinks.length === 0) {
 		console.log('No valid product links found.');
