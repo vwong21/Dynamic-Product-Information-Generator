@@ -8,8 +8,8 @@ const openai = new OpenAI({
 // Json schema for LLM
 example_json = {
 	product: {
-		id: '12345',
 		name: 'RoboBuddy 3000',
+		price: 1299.99,
 		description:
 			'An interactive robot toy with AI-powered responses and educational games.',
 		category: 'Toys & Games',

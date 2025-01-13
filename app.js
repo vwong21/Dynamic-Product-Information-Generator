@@ -13,10 +13,10 @@ app.get('/', async (req, res) => {
 		product_name = req.query.name;
 		productRes = await productInfo(product_name);
 		gptRes = await chatGptExecute(product_name, productRes);
-		res.json(JSON.parse(gptRes));
+		res.status(200).json(JSON.parse(gptRes));
 	} catch (error) {
 		console.error(typeof error);
-		res.json({ status: 'error', message: error.message });
+		res.status(400).json({ status: 'error', message: error.message });
 	}
 });
 
