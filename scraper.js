@@ -1,4 +1,5 @@
 process.env.DEBUG = 'puppeteer:page';
+const { timeout } = require('puppeteer');
 const puppeteer = require('puppeteer');
 
 const scraper = async (name) => {
@@ -158,6 +159,42 @@ const scraper = async (name) => {
 		);
 	}
 
+	// Wait for specifications to load and get specifications
+	try {
+		console.log('Getting specifications');
+		await page.waitForSelector(
+			'table#productDetails_techSpec_section_1.a-keyvalue.prodDetTable',
+			{ timeout: 3000 }
+		);
+
+		// Extract the specifications after the table is loaded
+		res.specifications = await page.evaluate(() => {
+			const table = document.querySelector(
+				'table#productDetails_techSpec_section_1.a-keyvalue.prodDetTable'
+			);
+			const rows = table.querySelectorAll('tbody tr');
+			const specsObject = {};
+
+			rows.forEach((row) => {
+				const th = row.querySelector('th');
+				const td = row.querySelector('td');
+				if (th && td) {
+					// Assign the th text as the key and td text as the value
+					specsObject[th.textContent.trim()] = td.textContent.trim();
+				}
+			});
+
+			return specsObject;
+		});
+
+		// Output the result
+		console.log(res.specifications);
+	} catch (error) {
+		throw new Error(
+			`Unable to retrieve specifications, with error message: ${error}`
+		);
+	}
+
 	// Wait for reviews to load and get reviews
 	try {
 		console.log('getting reviews');
@@ -199,7 +236,6 @@ const scraper = async (name) => {
 		);
 	}
 	await browser.close();
-	console.log(res);
 	return res;
 };
 

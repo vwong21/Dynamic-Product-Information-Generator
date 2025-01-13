@@ -78,6 +78,7 @@ const error = {
 
 const llm = async (name, data) => {
 	console.log('Starting LLM...');
+	console.log(data.specifications);
 	// Prompt to be plugged in as user to LLM. Takes the name variable and data
 	const prompt = `Provide valid JSON output. Check to see if the product ${name} is the same product as ${
 		data.name
@@ -93,7 +94,9 @@ const llm = async (name, data) => {
 	}. If they match, Fill out manufacturer.address, manufacturer.contact by doing research on ${
 		data.manufacturer
 	}. In your research, if you are unable to find information on any of the fields, omit them. If they don't match, omit the manufacturer field.
-	4. Omit the specifications field. 
+	4. Fill out the specifications with the specifications from this data: ${
+		data.specifications
+	}
 	5. Fill out the reviews with ${JSON.stringify(data.reviews)}
 `;
 
