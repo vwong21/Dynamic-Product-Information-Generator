@@ -78,21 +78,24 @@ const error = {
 
 const llm = async (name, data) => {
 	console.log('Starting LLM...');
-	console.log(data.reviews);
 	// Prompt to be plugged in as user to LLM. Takes the name variable and data
-	const prompt = `Provide valid JSON output. Ignoring caps, check to see if any part of ${
+	const prompt = `Provide valid JSON output. Check to see if the product ${name} is the same product as ${
 		data.name
-	} contains ${name} (case insensitive, space insensitive, and allow small errors). If it doesn't, send back ${JSON.stringify(
+	}. If the products differ, send this back:${JSON.stringify(
 		error
-	)}. If it does, do the following:
-	- Following the schema strictly, fill out name, manufacturer.name, and price with ${JSON.stringify(
+	)}. If the products are the same, follow these steps:
+	1.Following the schema strictly, fill out name, manufacturer.name, and price with ${JSON.stringify(
 		data
-	)}. Fill out id (model number), description, category, specifications, and tags with information regarding ${name}.
- 	Fill out the reviews with ${JSON.stringify(
-		data.reviews
-	)}. Fill out manufacturer.address, manufacturer.contact by researching ${
+	)}
+	2. Fill out description and category based on information from the product, ${name}
+	3. Do research to confirm that the manufacturer of the product, ${name} is the same manufacturer as ${
 		data.manufacturer
-	}`;
+	}. If they match, Fill out manufacturer.address, manufacturer.contact by doing research on ${
+		data.manufacturer
+	}. In your research, if you are unable to find information on any of the fields, omit them. If they don't match, omit the manufacturer field.
+	4. Omit the specifications field. 
+	5. Fill out the reviews with ${JSON.stringify(data.reviews)}
+`;
 
 	try {
 		const completion = await openai.chat.completions.create({
