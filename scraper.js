@@ -1,7 +1,7 @@
 process.env.DEBUG = 'puppeteer:page';
 const puppeteer = require('puppeteer');
 
-const productInfo = async (name) => {
+const scraper = async (name) => {
 	const res = {};
 
 	// Connect to headless browser
@@ -199,7 +199,8 @@ const productInfo = async (name) => {
 		);
 	}
 	await browser.close();
+	console.log(res);
 	return res;
 };
 
-module.exports = productInfo;
+module.exports = scraper;

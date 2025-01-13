@@ -76,7 +76,7 @@ const error = {
 	message: 'Product could not be found',
 };
 
-const chatGptExecute = async (name, data) => {
+const llm = async (name, data) => {
 	console.log('Starting LLM...');
 	console.log(data.reviews);
 	// Prompt to be plugged in as user to LLM. Takes the name variable and data
@@ -126,4 +126,4 @@ const chatGptExecute = async (name, data) => {
 	}
 };
 
-module.exports = chatGptExecute;
+module.exports = llm;
